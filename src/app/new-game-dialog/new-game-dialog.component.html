@@ -1,9 +1,10 @@
-<h1 mat-dialog-title>Congrats '{{winner}}' won the match</h1>
-<div mat-dialog-content>
+<h1 mat-dialog-title *ngIf="reset">Sorry! no more moves left</h1>
+<h1 mat-dialog-title *ngIf="!reset">Congrats '{{winner}}' won the match</h1>
+<div mat-dialog-content *ngIf="!reset">
     <h1>Score of X - {{xwins}}</h1>
     <h1>Score of O - {{owins}}</h1>
 </div>
 <div mat-dialog-actions>
     <button mat-stroked-button color="primary" (click)="onYesClick()">Start New Game</button>
-    <button mat-stroked-button color="warn" (click)="onResetClick()">Reset Scores</button>
+    <button mat-stroked-button color="warn" (click)="onResetClick()" *ngIf="!reset">Reset Scores</button>
 </div>

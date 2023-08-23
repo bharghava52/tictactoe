@@ -14,11 +14,10 @@ export class StoreServiceService {
 
   xWon() {
     this.wins[0]++;
-    console.log(this.getWins());
   }
 
   oWon() {
-    this.wins[1]+=1;
+    this.wins[1]++;
   }
 
   onResetWins() {

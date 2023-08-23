@@ -14,6 +14,7 @@ export class BoardComponent implements OnInit {
   xIsNext = true;
   winner = '';
   squaresFilled: number[] = Array(9).fill(0);
+  moves = 0;
 
   constructor(public dialog: MatDialog, private storeServiceService: StoreServiceService) {}
 
@@ -25,6 +26,7 @@ export class BoardComponent implements OnInit {
     this.squares = Array(9).fill('');
     this.xIsNext = true;
     this.winner = '';
+    this.moves = 0;
     this.squaresFilled = Array(9).fill(0);
   }
 
@@ -36,18 +38,23 @@ export class BoardComponent implements OnInit {
     if(this.squaresFilled[idx] === 0){
       this.squares[idx] = this.getPlayer();
       this.squaresFilled[idx] = 1;
+      this.moves++;
       this.xIsNext = !this.xIsNext;
+      if(this.calculateWinner()) {
+        this.winner === 'X' ? this.storeServiceService.xWon() : this.storeServiceService.oWon();
+        this.openWinnerDialog(false);
+      } else if(this.moves === 9) {
+        this.openWinnerDialog(true);
+      }
+
     }
-    if(this.calculateWinner()) {
-      this.winner === 'X' ? this.storeServiceService.xWon() : this.storeServiceService.oWon();
-      this.openWinnerDialog();
-    } 
   }
 
-  openWinnerDialog() {
+  openWinnerDialog(restart: Boolean) {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      winner: this.winner
+      winner: this.winner,
+      restart: restart
     };
     const dialogRef = this.dialog.open(NewGameDialogComponent, dialogConfig);
     dialogRef.afterClosed().subscribe(result => {
