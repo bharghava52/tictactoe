@@ -1,13 +1,12 @@
-<button (click)="newGame()"> new Game</button>
-<h2>{{winner}}</h2>
-
-<main>
-    <app-square 
-        *ngFor="let val of squares; let i = index"
-        [buttonValue]="val"
-        (click) = "makeMove(i)"
-        (mouseenter) ="mouseEnter(i)"  
-        (mouseleave) ="mouseLeave(i)"
-        >
-    </app-square>
-</main>
+<div class="board-container">
+    <main>
+        <app-square 
+            *ngFor="let val of squares; let i = index"
+            [buttonValue]="val"
+            (click) = "makeMove(i)"
+            (mouseenter) ="mouseEnter(i)"  
+            (mouseleave) ="mouseLeave(i)"
+            >
+        </app-square>
+    </main>
+</div>

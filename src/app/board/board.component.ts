@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { NewGameDialogComponent } from '../new-game-dialog/new-game-dialog.component';
+import { StoreServiceService } from '../store-service.service';
 
 @Component({
   selector: 'app-board',
@@ -9,8 +12,10 @@ export class BoardComponent implements OnInit {
 
   squares: string[] = Array(9).fill('');
   xIsNext = true;
-  winner = "";
+  winner = '';
   squaresFilled: number[] = Array(9).fill(0);
+
+  constructor(public dialog: MatDialog, private storeServiceService: StoreServiceService) {}
 
   ngOnInit(): void {
     this.newGame();
@@ -19,7 +24,7 @@ export class BoardComponent implements OnInit {
   newGame() {
     this.squares = Array(9).fill('');
     this.xIsNext = true;
-    this.winner = "";
+    this.winner = '';
     this.squaresFilled = Array(9).fill(0);
   }
 
@@ -33,7 +38,23 @@ export class BoardComponent implements OnInit {
       this.squaresFilled[idx] = 1;
       this.xIsNext = !this.xIsNext;
     }
-    this.winner = this.calculateWinner() ? `the winner is ` + this.calculateWinner() : '';
+    if(this.calculateWinner()) {
+      this.winner === 'X' ? this.storeServiceService.xWon() : this.storeServiceService.oWon();
+      this.openWinnerDialog();
+    } 
+  }
+
+  openWinnerDialog() {
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      winner: this.winner
+    };
+    const dialogRef = this.dialog.open(NewGameDialogComponent, dialogConfig);
+    dialogRef.afterClosed().subscribe(result => {
+      if(result?.action === 'new game') {
+        this.newGame();
+      }
+    });
   }
 
   mouseEnter(idx: number) {
@@ -53,8 +74,6 @@ export class BoardComponent implements OnInit {
     }
   }
 
-
-
   calculateWinner() {
     const lines = [
       [0,1,2],
@@ -72,6 +91,7 @@ export class BoardComponent implements OnInit {
          this.squares[a] === this.squares[b] &&
          this.squares[a] === this.squares[c] 
         ) {
+          this.winner = this.squares[a];
           return this.squares[a];
         }
     }
